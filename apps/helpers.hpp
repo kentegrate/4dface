@@ -17,8 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#pragma once
 
+#pragma once
 #ifndef APP_HELPERS_HPP_
 #define APP_HELPERS_HPP_
 
@@ -38,7 +38,7 @@
 #include <algorithm>
 #include <iterator>
 #include <cassert>
-
+#include <sys/time.h>
 /**
  * @brief Scales and translates a facebox. Useful for converting
  * between face boxes from different face detectors.
@@ -242,6 +242,35 @@ public:
 private:
 	int num_processed_frames = 0;
 	cv::Mat merged_shape_coefficients;
+};
+
+class PerformanceMonitor{
+public:
+  void start(int start_line){
+    gettimeofday(&start_time, NULL);
+    _start_line = start_line;
+  }
+  void lap(int lap_line){
+    gettimeofday(&end_time, NULL);
+    double dt = getTimeDeltaMs(end_time, start_time);
+    printf("Took %f ms from L.%d to L.%d\n", dt, _start_line, lap_line);
+    _start_line = lap_line;
+    gettimeofday(&start_time, NULL);
+  }
+  void stop(int stop_line){
+    gettimeofday(&end_time, NULL);
+    double dt = getTimeDeltaMs(end_time, start_time);
+    printf("Took %f ms from L.%d to L.%d\n", dt, _start_line, stop_line);
+  }
+private:
+  double getTimeDeltaMs(struct timeval t1, struct timeval t2){
+    struct timeval dt;
+    timersub(&t1, &t2, &dt);
+    return dt.tv_sec*1000 + dt.tv_usec/1000.0;
+  }
+  int _start_line, _lap_line, _stop_line;
+  struct timeval start_time;
+  struct timeval end_time;
 };
 
 #endif /* APP_HELPERS_HPP_ */
