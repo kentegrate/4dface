@@ -72,7 +72,7 @@ void Face4D::init()
 
   
   have_face = false;
-  std::string abs_path("/home/ken/dlib_ws/src/4dface/install/share/");
+  std::string abs_path("/home/denjo/4dface/install/share/");
   fs::path modelfile("sfm_shape_3448.bin");
   fs::path inputvideo;
   fs::path facedetector("haarcascade_frontalface_alt2.xml");
