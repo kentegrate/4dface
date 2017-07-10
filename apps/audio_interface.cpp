@@ -2,36 +2,57 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <unistd.h>
+
 void AudioInterface::init(){
   if(mode == MEDIA_SEND){
-    FILE *fp=popen("rec -t raw -b 16 -c 1 -e s -r 44100 -", "r");
-    if(fp == NULL){
-      fprintf(stderr, "popen error");
-    }
-    sox = fileno(fp);
+    sox_signalinfo_t signalinfo;
+    signalinfo.rate = 48000;
+    signalinfo.channels = 1;
+    signalinfo.precision = 8;
+    signalinfo.length = -1;
+    signalinfo.mult = NULL;
+  
+    audio_buff = (sox_sample_t*)malloc(sizeof(sox_sample_t) * BUFF_SIZE);
+    
+    //buff_size = BUFF_SIZE;//sizeof(sox_sample_t) * BUFF_SIZE;
+    buff_size = BUFF_SIZE;
+    sox_init();
+    ft = sox_open_read("default", &signalinfo, 0, "pulseaudio");
   }
   else{
-    FILE *fp=popen("play -t raw -b 16 -c 1 -e s -r 44100 -", "w");
-    if(fp == NULL){
-      fprintf(stderr, "popen error");
-    }
-    sox = fileno(fp);
+    sox_signalinfo_t signalinfo;
+    signalinfo.rate = 48000;
+    signalinfo.channels = 1;
+    signalinfo.precision = 8;
+    signalinfo.length = -1;
+    signalinfo.mult = NULL;
+    
+    audio_buff = (sox_sample_t*)malloc(sizeof(sox_sample_t) * BUFF_SIZE);
+    //    buff_size = sizeof(audio_buff);//BUFF_SIZE;//sizeof(sox_sample_t) * BUFF_SIZE;
+    buff_size = BUFF_SIZE;
+    sox_init();    
+    ft = sox_open_write("default", &signalinfo, 0, "pulseaudio", 0, 0);
   }
-  buff_size = sizeof(uchar)*BUFF_SIZE;
-  read_size = buff_size;
-  buff = (uchar*)malloc(buff_size);
 }
 
 void AudioInterface::prepareSendMedia(){
-  int n = read(sox, buff, buff_size);
+  int n = sox_read(ft, audio_buff, buff_size);
   if(n == -1){
     perror("read");
   }
   send_size = n;
 }
-
+void AudioInterface::receiveMedia(int socket, struct sockaddr_in addr, bool wait_al){
+  read_size = recv(socket, audio_buff, buff_size*4, 0);
+  if(read_size == -1){
+    perror("receive");
+  }
+}
+void AudioInterface::sendMedia(int socket, struct sockaddr_in addr){
+  sendto(socket, audio_buff, send_size*4, 0, (struct sockaddr*)&addr, sizeof(struct sockaddr));
+}
 void AudioInterface::playRecvMedia(){
-  write(sox, buff, read_size);
+  sox_write(ft, audio_buff, read_size/4);
 }
 
 void AudioInterface::fini(){

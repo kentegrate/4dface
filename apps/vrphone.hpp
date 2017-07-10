@@ -17,6 +17,7 @@
 
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/objdetect/objdetect.hpp"
+#include <sox.h>
 #define MEDIA_SEND 0
 #define MEDIA_RECV 1
 //#include "4dface.hpp"
@@ -105,10 +106,14 @@ public:
   }
   
   virtual void init();
-  virtual void fini();    
-  virtual void prepareSendMedia();
+  virtual void fini();
+  virtual void receiveMedia(int socket, struct sockaddr_in addr, bool wait_all=true);
+  virtual void sendMedia(int socket, struct sockaddr_in addr);
+    virtual void prepareSendMedia();
   virtual void playRecvMedia();
   int sox;
+  sox_format_t * ft;
+  sox_sample_t * audio_buff;  
 };
 
 int UDP_client_init(struct sockaddr_in* addr, int port);
