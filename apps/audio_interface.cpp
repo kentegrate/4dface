@@ -32,6 +32,7 @@ void AudioInterface::init(){
     buff_size = BUFF_SIZE;
     sox_init();    
     ft = sox_open_write("default", &signalinfo, 0, "pulseaudio", 0, 0);
+    read_size = 0;
   }
 }
 
@@ -52,7 +53,8 @@ void AudioInterface::sendMedia(int socket, struct sockaddr_in addr){
   sendto(socket, audio_buff, send_size*4, 0, (struct sockaddr*)&addr, sizeof(struct sockaddr));
 }
 void AudioInterface::playRecvMedia(){
-  sox_write(ft, audio_buff, read_size/4);
+  if(read_size > 0)
+    sox_write(ft, audio_buff, read_size/4);
 }
 
 void AudioInterface::fini(){
