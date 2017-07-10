@@ -82,7 +82,6 @@ void Face4D::init()
   fs::path edgetopologyfile("sfm_3448_edge_topology.json");
   fs::path blendshapesfile("expression_blendshapes_3448.bin");
   parallax_coeff = 20;
-  std::cout << fs::absolute(modelfile, abs_path).string() << std::endl;
   *morphable_model = morphablemodel::load_model(fs::absolute(modelfile, abs_path).string());
   *landmark_mapper = core::LandmarkMapper(fs::absolute(mappingsfile,abs_path));
   *model_contour = fitting::ModelContour::load(fs::absolute(contourfile, abs_path).string());
@@ -104,7 +103,6 @@ void Face4D::init()
       cout << "Error loading the face detector " << facedetector << "." << endl;
       //      return EXIT_FAILURE;
     }
-  printf("hgo3\n");  
   fflush(stdout);  
 
   if (inputvideo.empty()) {
