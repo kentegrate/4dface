@@ -174,19 +174,19 @@ void Face4D::getFrame(Mat &img)
   vector<float> shape_coefficients, blendshape_coefficients;
   vector<Vec2f> image_points;
   render::Mesh mesh; 
-  PerformanceMonitor performance; 
-  performance.start(__LINE__);
+  //  PerformanceMonitor performance; 
+  //  performance.start(__LINE__);
   std::tie(mesh, rendering_params) = fitting::fit_shape_and_pose(*morphable_model, *blendshapes, rcr_to_eos_landmark_collection(*current_landmarks), *landmark_mapper, unmodified_frame.cols, unmodified_frame.rows, *edge_topology, *ibug_contour, *model_contour, 2, 5, 15.0f, boost::none, shape_coefficients, blendshape_coefficients, image_points);
-  performance.lap(__LINE__);	
+  //  performance.lap(__LINE__);	
   // Draw the 3D pose of the face:
   draw_axes_topright(glm::eulerAngles(rendering_params.get_rotation())[0], glm::eulerAngles(rendering_params.get_rotation())[1], glm::eulerAngles(rendering_params.get_rotation())[2], frame);
-  performance.lap(__LINE__);	
+  //  performance.lap(__LINE__);	
   // Wireframe rendering of mesh of this frame (non-averaged):
   draw_wireframe(frame, mesh, rendering_params.get_modelview(), rendering_params.get_projection(), fitting::get_opencv_viewport(frame.cols, frame.rows));
-  performance.lap(__LINE__);	
+  //  performance.lap(__LINE__);	
   // Extract the texture using the fitted mesh from this frame:
   Mat affine_cam = fitting::get_3x4_affine_camera_matrix(rendering_params, frame.cols, frame.rows);
-  performance.lap(__LINE__);
+  //  performance.lap(__LINE__);
 		
   if(isomap.empty()){
     boost::unique_future<void> extract =
@@ -209,14 +209,14 @@ void Face4D::getFrame(Mat &img)
   }
   //		  isomap = render::extract_texture(mesh, affine_cam, unmodified_frame, true, render::TextureInterpolation::NearestNeighbour, 512);
 		
-  performance.lap(__LINE__);	
+  //  performance.lap(__LINE__);	
   // Merge the isomaps - add the current one to the already merged ones:
   //		Mat merged_isomap = isomap_averaging.add_and_merge(isomap);
   // Same for the shape:
   shape_coefficients = pca_shape_merging->add_and_merge(shape_coefficients);
   auto merged_shape = morphable_model->get_shape_model().draw_sample(shape_coefficients) + morphablemodel::to_matrix(*blendshapes) * Mat(blendshape_coefficients);
   render::Mesh merged_mesh = morphablemodel::sample_to_mesh(merged_shape, morphable_model->get_color_model().get_mean(), morphable_model->get_shape_model().get_triangle_list(), morphable_model->get_color_model().get_triangle_list(), morphable_model->get_texture_coordinates());
-  performance.lap(__LINE__);	
+  //  performance.lap(__LINE__);	
   // Render the model in a separate window using the estimated pose, shape and merged texture:
   Mat rendering;
   auto modelview_no_translation = rendering_params.get_modelview();
@@ -224,7 +224,7 @@ void Face4D::getFrame(Mat &img)
   modelview_no_translation[3][1] = 0;
   render_anaglyph(merged_mesh, modelview_no_translation, glm::ortho(-130.0f, 130.0f, -130.0f, 130.0f), 400, 400, render::create_mipmapped_texture(isomap), rendering);
   
-  performance.stop(__LINE__);
+  //  performance.stop(__LINE__);
   //  cv::imshow("render", rendering);
   cv::imshow("video", frame);
   img = rendering.clone();
