@@ -5,7 +5,6 @@ void VideoInterface::init(){
   printf("mat size %d \n", img.total() * img.elemSize());
   buff = img.data;
   buff_size = img.total() * img.elemSize();
-
   if(mode == MEDIA_SEND){
     face.init();
     cv::namedWindow("VR Phone Server", 1);
@@ -20,13 +19,22 @@ void VideoInterface::fini(){
 
 void VideoInterface::receiveMedia(int socket, struct sockaddr_in addr, bool wait_all){
   std::vector<uchar> img_buff;
+  int img_size = 0;
   while(1){
     uchar tiny_buff[BUFF_SIZE];
     int n = recv(socket, tiny_buff, BUFF_SIZE, 0);
+    img_size += n;
     if(n==0)break;
-    std::copy(tiny_buff, tiny_buff+n, img_buff.begin());    
+    if(n==-1)break;
+    for(int i = 0; i < n; i++){
+      img_buff.push_back(tiny_buff[i]);
+    }
+    if(n != BUFF_SIZE)break;
   }
-  img = imdecode(cv::Mat(img_buff), CV_LOAD_IMAGE_COLOR);
+  cv::Mat img_tmp = imdecode(cv::Mat(img_buff), CV_LOAD_IMAGE_COLOR);
+  if(img_tmp.rows > 0 && img_tmp.cols > 0){
+    img = img_tmp.clone();
+  }
 }
 
 void VideoInterface::sendMedia(int socket, struct sockaddr_in addr){
@@ -46,8 +54,10 @@ void VideoInterface::sendMedia(int socket, struct sockaddr_in addr){
     }
     tiny_buffer = &img_buff[0] + current_idx;
     sendto(socket, tiny_buffer, sending_bytes, 0, (struct sockaddr*)&addr, sizeof(struct sockaddr));
+    printf("sended %d bytes\n", sending_bytes);
     current_idx += sending_bytes;
   }
+
 }
 
 void VideoInterface::prepareSendMedia(){

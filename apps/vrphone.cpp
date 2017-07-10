@@ -22,14 +22,18 @@ int op_mode;
 struct sockaddr_in opponent_addr;
 
 void threaded_send(struct sockaddr_in* addr, int port, MediaInterface *media){
-  int send_sock = UDP_client_init(addr, port);
+
   media->init();
+  int send_sock = UDP_client_init(addr, port);  
   while(!signaled){
+
     media->prepareSendMedia();
     media->sendMedia(send_sock, *addr);
+
   }
+  UDP_client_fini(send_sock);      
   media->fini();  
-  UDP_client_fini(send_sock);
+
   std::cout << "thread send end"<<std::endl;
 }
 
@@ -38,8 +42,8 @@ void threaded_recv(int port, MediaInterface *media){
   struct sockaddr_in addr;
   int recv_sock = UDP_server_init(&addr, port);
    while(!signaled){
-    media->receiveMedia(recv_sock, addr);
-    media->playRecvMedia();
+     media->receiveMedia(recv_sock, addr);
+     media->playRecvMedia();
     }
   media->fini();
   UDP_server_fini(recv_sock);
@@ -78,7 +82,7 @@ int main(int argc, char** argv){
   else{
     printf("starting in client mode.\n");
     op_mode = CLIENT_MODE;
-    char *ip = "192.168.86.102";
+    char *ip = "127.0.0.1";
     inet_aton(ip, &opponent_addr.sin_addr);
     printf("starting connection.\n");
     int tcp_socket = TCP_client_init(ip, SERVER_TCP_PORT);
@@ -97,19 +101,16 @@ int main(int argc, char** argv){
 
   //  install_sig_hooks();
   //    if(false){
-  // if(option != "s"){//in server mode
     std::thread video_send_thread(threaded_send, &opponent_addr,
 				op_mode == CLIENT_MODE ? SERVER_VIDEO_UDP_PORT : CLIENT_VIDEO_UDP_PORT,
 				&video_send);
-
-    //  }
-    //  else{
     std::thread video_recv_thread(threaded_recv,
 				  op_mode == SERVER_MODE ? SERVER_VIDEO_UDP_PORT : CLIENT_VIDEO_UDP_PORT,
 				  &video_recv);
-    video_send_thread.join();    
-    video_recv_thread.join();    
-    //  }
+
+    video_send_thread.join();
+    video_recv_thread.join();        
+  
   //   }
     /*  if(option == "s"){
   std::thread audio_send_thread(threaded_send, &opponent_addr,
