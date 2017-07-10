@@ -8,6 +8,7 @@
 #include <stdlib.h>
 
 #define SERVER_TCP_PORT 50000
+#define SERVER_TCP_PORT2 50001
 #define SERVER_VIDEO_UDP_PORT 50012
 #define CLIENT_VIDEO_UDP_PORT 50013
 #define SERVER_AUDIO_UDP_PORT 50003
@@ -70,12 +71,19 @@ int main(int argc, char** argv){
   
 
   std::string option(argv[1]);
-  std::string option2(argv[2]);  
+  std::string option2(argv[2]);
+  int port;
+  if(option2 == "v"){
+    port = SERVER_TCP_PORT;
+  }
+  else{
+    port = SERVER_TCP_PORT2;
+  }
   if (option == "s"){//in server mode
     printf("starting in server mode.\n");
     op_mode = SERVER_MODE;
     printf("awaiting connection.\n");
-    int tcp_socket = TCP_server_init(SERVER_TCP_PORT, &opponent_addr);
+    int tcp_socket = TCP_server_init(port, &opponent_addr);
     TCP_server_fini(tcp_socket);
     printf("TCP connection finished\n");
   }
@@ -86,7 +94,7 @@ int main(int argc, char** argv){
     //    char *ip = "127.0.0.1";
     inet_aton(ip, &opponent_addr.sin_addr);
     printf("starting connection.\n");
-    int tcp_socket = TCP_client_init(ip, SERVER_TCP_PORT);
+    int tcp_socket = TCP_client_init(ip, port);
     
     TCP_client_fini(tcp_socket);
     printf("TCP connection finished\n");
