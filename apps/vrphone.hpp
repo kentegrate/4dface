@@ -105,4 +105,17 @@ public:
   int sox;
 };
 
+int UDP_client_init(char *IP_addr,int port);
+void UDP_client_fini(int sock);
+int UDP_server_init(int port);
+int UDP_server_fini(int sock);
+
+
+int TCP_client_init(char *IP_addr,int port);
+void TCP_client_fini(int sock);
+int TCP_server_init(int port,struct sockaddr_in *client);
+void TCP_server_fini(int sock);
+
+
+
 #endif// VRPHONE_HPP

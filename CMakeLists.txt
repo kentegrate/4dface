@@ -115,7 +115,7 @@ add_library(4dface apps/4dface.hpp apps/4dface.cpp apps/helpers.hpp)
 target_link_libraries(4dface ${OpenCV_LIBS} ${Boost_LIBRARIES} )
 
 add_executable(vrphone apps/vrphone.cpp apps/video_interface.cpp apps/audio_interface.cpp
-  apps/media_interface.cpp apps/vrphone.hpp )
+  apps/media_interface.cpp apps/vrphone.hpp apps/udp.cpp apps/tcp.cpp)
 target_link_libraries(vrphone 4dface ${OpenCV_LIBS} ${Boost_LIBRARIES})
 
 # install targets:

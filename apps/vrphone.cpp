@@ -15,35 +15,32 @@
 #define SERVER_MODE 0
 #define CLIENT_MODE 1
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
 int signaled = 0;
 int op_mode;
 
 struct sockaddr_in opponent_addr;
 
 void threaded_send(struct sockaddr* dest_addr, int port, MediaInterface *media){
-  //  int send_sock = UDP_client_init(dest_addr, port);
+  int send_sock = UDP_client_init(dest_addr, port);
   media->init();
   while(!signaled){
     media->prepareSendMedia();
-    //    media->sendMedia(send_sock);
+    media->sendMedia(send_sock);
   }
   media->fini();  
-  //  UDP_client_fini(send_sock);
+  UDP_client_fini(send_sock);
   std::cout << "thread send end"<<std::endl;
 }
 
 void threaded_recv(int port, MediaInterface *media){
   media->init();
-  ///int recv_sock = UDP_server_init(port);
+  int recv_sock = UDP_server_init(port);
   while(!signaled){
-    //    media->receiveMedia(recv_sock);
+    media->receiveMedia(recv_sock);
     media->playRecvMedia();
   }
   media->fini();
-  //  UDP_server_fini(recv_sock);
+  UDP_server_fini(recv_sock);
   std::cout << "thread recv end"<<std::endl;  
 }
 
@@ -72,16 +69,15 @@ int main(int argc, char** argv){
     printf("starting in server mode.\n");
     op_mode = SERVER_MODE;
 
-    //    
-    //    int tcp_socket = TCP_server_init(SERVER_TCP_PORT, &opponent_addr);
-    //    TCP_fini(tcp_socket);
+    int tcp_socket = TCP_server_init(SERVER_TCP_PORT, &opponent_addr);
+    TCP_fini(tcp_socket);
   }
   else{//in client mode
     char* server_ip = argv[2];    
     printf("starting in client mode.\n");
     op_mode = CLIENT_MODE;
-    //    int tcp_socket = TCP_client_init(server_ip, SERVER_TCP_PORT);
-    //    TCP_fini(tcp_socket);
+    int tcp_socket = TCP_client_init(server_ip, SERVER_TCP_PORT);
+    TCP_fini(tcp_socket);
   }
 
   VideoInterface video_send(MEDIA_SEND);  
