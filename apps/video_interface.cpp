@@ -2,7 +2,6 @@
 
 void VideoInterface::init(){
   img = cv::Mat::zeros(400, 800, CV_8UC4);
-  printf("mat size %d \n", img.total() * img.elemSize());
   buff = img.data;
   buff_size = img.total() * img.elemSize();
   if(mode == MEDIA_SEND){
@@ -54,7 +53,6 @@ void VideoInterface::sendMedia(int socket, struct sockaddr_in addr){
     }
     tiny_buffer = &img_buff[0] + current_idx;
     sendto(socket, tiny_buffer, sending_bytes, 0, (struct sockaddr*)&addr, sizeof(struct sockaddr));
-    printf("sended %d bytes\n", sending_bytes);
     current_idx += sending_bytes;
   }
 
@@ -65,8 +63,6 @@ void VideoInterface::prepareSendMedia(){
   
   buff = img.data;
   send_size = img.total() * img.elemSize();
-
-  printf("height %d, width %d, depth %d", img.rows, img.cols, img.depth());
     cv::imshow("VR Phone Server", img);
     auto key = cv::waitKey(1);  
 }

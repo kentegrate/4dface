@@ -101,7 +101,7 @@ int main(int argc, char** argv){
 
   //  install_sig_hooks();
   //    if(false){
-    std::thread video_send_thread(threaded_send, &opponent_addr,
+  std::thread video_send_thread(threaded_send, &opponent_addr,
 				op_mode == CLIENT_MODE ? SERVER_VIDEO_UDP_PORT : CLIENT_VIDEO_UDP_PORT,
 				&video_send);
     std::thread video_recv_thread(threaded_recv,
@@ -117,8 +117,8 @@ int main(int argc, char** argv){
   std::thread audio_recv_thread(threaded_recv,
 				op_mode == SERVER_MODE ? SERVER_AUDIO_UDP_PORT : CLIENT_AUDIO_UDP_PORT,
 				&audio_recv);
-  video_send_thread.join();
-  video_recv_thread.join();        
+    video_send_thread.join();
+    video_recv_thread.join();        
   audio_recv_thread.join();  
   audio_send_thread.join();  
 
