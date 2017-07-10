@@ -42,13 +42,14 @@ void render_anaglyph(render::Mesh mesh, glm::tmat4x4<float> model_view_matrix, g
   std::tie(render_right, std::ignore) = render::render(mesh, model_view_matrix, projection_matrix, viewport_width,
 						      viewport_height, texture, true, false, false);  
 
-  vector<Mat> left_channels;
-  vector<Mat> right_channels;  
+  //  vector<Mat> left_channels;
+  //  vector<Mat> right_channels;  
   
-  cv::split(render_left, left_channels);
+  /*  cv::split(render_left, left_channels);
   cv::split(render_right, right_channels);
   std::vector<Mat> merging_channels{right_channels[0], right_channels[1], left_channels[2]};
-  cv::merge(merging_channels, rendered);
+  cv::merge(merging_channels, rendered);*/
+  cv::hconcat(render_left, render_right, rendered);
 }
 
 void draw_axes_topright(float r_x, float r_y, float r_z, cv::Mat image);
