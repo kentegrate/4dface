@@ -2,7 +2,7 @@
 #ifndef VRPHONE_HPP
 #define VRPHONE_HPP
 #define BUFF_SIZE 4800
-
+#define DIV_SIZE 300
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>

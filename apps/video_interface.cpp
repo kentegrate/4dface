@@ -20,17 +20,17 @@ void VideoInterface::fini(){
 
 void VideoInterface::receiveMedia(int socket, struct sockaddr_in addr, bool wait_all){
   uchar* tiny_buffer;  
-  for(int i = 0; i < 30; i++){
-    tiny_buffer = img.data + (buff_size/30)*i;
-    recv(socket, tiny_buffer, buff_size/30, 0);
+  for(int i = 0; i < DIV_SIZE; i++){
+    tiny_buffer = img.data + (buff_size/DIV_SIZE)*i;
+    recv(socket, tiny_buffer, buff_size/DIV_SIZE, 0);
   }
 }
 
 void VideoInterface::sendMedia(int socket, struct sockaddr_in addr){
   uchar* tiny_buffer;
-  for(int i = 0; i < 30; i++){
-    tiny_buffer = img.data + (send_size/30)*i;
-    sendto(socket, tiny_buffer, send_size/30, 0, (struct sockaddr*)&addr, sizeof(struct sockaddr));
+  for(int i = 0; i < DIV_SIZE; i++){
+    tiny_buffer = img.data + (send_size/DIV_SIZE)*i;
+    sendto(socket, tiny_buffer, send_size/DIV_SIZE, 0, (struct sockaddr*)&addr, sizeof(struct sockaddr));
     
   }
 }

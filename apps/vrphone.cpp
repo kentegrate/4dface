@@ -37,10 +37,10 @@ void threaded_recv(int port, MediaInterface *media){
   media->init();
   struct sockaddr_in addr;
   int recv_sock = UDP_server_init(&addr, port);
-  while(!signaled){
+   while(!signaled){
     media->receiveMedia(recv_sock, addr);
     media->playRecvMedia();
-  }
+    }
   media->fini();
   UDP_server_fini(recv_sock);
   std::cout << "thread recv end"<<std::endl;  
@@ -95,7 +95,7 @@ int main(int argc, char** argv){
   AudioInterface audio_send(MEDIA_SEND);
   AudioInterface audio_recv(MEDIA_RECV);
 
-  install_sig_hooks();
+  //  install_sig_hooks();
   //    if(false){
   // if(option != "s"){//in server mode
     std::thread video_send_thread(threaded_send, &opponent_addr,
@@ -123,8 +123,9 @@ int main(int argc, char** argv){
 				&audio_recv);
 
   audio_recv_thread.join();  
-  }*/
+  }*;
 
+    */
 
 
 
