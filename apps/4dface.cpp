@@ -81,7 +81,7 @@ void Face4D::init()
   fs::path contourfile("model_contours.json");
   fs::path edgetopologyfile("sfm_3448_edge_topology.json");
   fs::path blendshapesfile("expression_blendshapes_3448.bin");
-  parallax_coeff = 20;
+  parallax_coeff = 40;
   *morphable_model = morphablemodel::load_model(fs::absolute(modelfile, abs_path).string());
   *landmark_mapper = core::LandmarkMapper(fs::absolute(mappingsfile,abs_path));
   *model_contour = fitting::ModelContour::load(fs::absolute(contourfile, abs_path).string());
