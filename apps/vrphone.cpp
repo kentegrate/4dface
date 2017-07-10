@@ -82,7 +82,7 @@ int main(int argc, char** argv){
     printf("starting in client mode.\n");
     op_mode = CLIENT_MODE;
     printf("starting connection.\n");
-    int tcp_socket = TCP_client_init("192.168.100.108", SERVER_TCP_PORT);
+    int tcp_socket = TCP_client_init("127.0.0.1", SERVER_TCP_PORT);
     TCP_client_fini(tcp_socket);
     printf("TCP connection finished\n");
 
@@ -112,15 +112,16 @@ int main(int argc, char** argv){
   }
   }
   //  if(option == "s"){
-    std::thread audio_send_thread(threaded_send, &opponent_addr,
+  std::thread audio_send_thread(threaded_send, &opponent_addr,
 				op_mode == CLIENT_MODE ? SERVER_AUDIO_UDP_PORT : CLIENT_AUDIO_UDP_PORT,
 				&audio_send);
-    audio_send_thread.join();
+
     //  }
     //  else{
   std::thread audio_recv_thread(threaded_recv,
 				op_mode == SERVER_MODE ? SERVER_AUDIO_UDP_PORT : CLIENT_AUDIO_UDP_PORT,
 				&audio_recv);
+  audio_send_thread.join();  
   audio_recv_thread.join();  
   //  }
 
