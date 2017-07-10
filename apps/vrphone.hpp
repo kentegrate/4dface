@@ -90,7 +90,8 @@ public:
   }
   virtual void init();
   virtual void fini();
-  virtual void receiveMedia(int socket, struct sockaddr_in addr, bool wait_all=true);  
+  virtual void receiveMedia(int socket, struct sockaddr_in addr, bool wait_all=true);
+  virtual void sendMedia(int socket, struct sockaddr_in addr);
   virtual void prepareSendMedia();
   virtual void playRecvMedia();
   cv::Mat img;

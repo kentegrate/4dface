@@ -5,10 +5,11 @@
 #include <signal.h> // for sigaction() function
 #include <string.h>
 #include "vrphone.hpp"
+#include <stdlib.h>
 
 #define SERVER_TCP_PORT 50000
-#define SERVER_VIDEO_UDP_PORT 50005
-#define CLIENT_VIDEO_UDP_PORT 50007
+#define SERVER_VIDEO_UDP_PORT 50012
+#define CLIENT_VIDEO_UDP_PORT 50013
 #define SERVER_AUDIO_UDP_PORT 50003
 #define CLIENT_AUDIO_UDP_PORT 50004
 
@@ -35,13 +36,9 @@ void threaded_send(struct sockaddr_in* addr, int port, MediaInterface *media){
 void threaded_recv(int port, MediaInterface *media){
   media->init();
   struct sockaddr_in addr;
-  printf("hoge1\n");  
   int recv_sock = UDP_server_init(&addr, port);
-  printf("hoge2\n");
   while(!signaled){
-    printf("hoge3\n");    
     media->receiveMedia(recv_sock, addr);
-    printf("hoge4\n");        
     media->playRecvMedia();
   }
   media->fini();
@@ -81,7 +78,7 @@ int main(int argc, char** argv){
   else{
     printf("starting in client mode.\n");
     op_mode = CLIENT_MODE;
-    char *ip = "192.168.100.108";
+    char *ip = "127.0.0.1";
     inet_aton(ip, &opponent_addr.sin_addr);
     printf("starting connection.\n");
     int tcp_socket = TCP_client_init(ip, SERVER_TCP_PORT);
@@ -99,9 +96,8 @@ int main(int argc, char** argv){
   AudioInterface audio_recv(MEDIA_RECV);
 
   install_sig_hooks();
-  if(false){
-  if(option == "s"){//in server mode
-
+  //    if(false){
+  if(option != "s"){//in server mode
     std::thread video_send_thread(threaded_send, &opponent_addr,
 				op_mode == CLIENT_MODE ? SERVER_VIDEO_UDP_PORT : CLIENT_VIDEO_UDP_PORT,
 				&video_send);
@@ -113,20 +109,20 @@ int main(int argc, char** argv){
 				  &video_recv);
     video_recv_thread.join();    
   }
-  }
-  //  if(option == "s"){
+  //   }
+    /*  if(option == "s"){
   std::thread audio_send_thread(threaded_send, &opponent_addr,
 				op_mode == CLIENT_MODE ? SERVER_AUDIO_UDP_PORT : CLIENT_AUDIO_UDP_PORT,
 				&audio_send);
-
-    //  }
-    //  else{
+  audio_send_thread.join();  
+  }
+  else{
   std::thread audio_recv_thread(threaded_recv,
 				op_mode == SERVER_MODE ? SERVER_AUDIO_UDP_PORT : CLIENT_AUDIO_UDP_PORT,
 				&audio_recv);
-  audio_send_thread.join();  
+
   audio_recv_thread.join();  
-  //  }
+  }*/
 
 
 

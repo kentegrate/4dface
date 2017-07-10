@@ -222,7 +222,7 @@ void Face4D::getFrame(Mat &img)
   auto modelview_no_translation = rendering_params.get_modelview();
   modelview_no_translation[3][0] = 20;
   modelview_no_translation[3][1] = 0;
-  render_anaglyph(merged_mesh, modelview_no_translation, glm::ortho(-130.0f, 130.0f, -130.0f, 130.0f), 100, 100, render::create_mipmapped_texture(isomap), rendering);
+  render_anaglyph(merged_mesh, modelview_no_translation, glm::ortho(-130.0f, 130.0f, -130.0f, 130.0f), 400, 400, render::create_mipmapped_texture(isomap), rendering);
   
   performance.stop(__LINE__);
   //  cv::imshow("render", rendering);
