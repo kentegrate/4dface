@@ -16,8 +16,14 @@ void AudioInterface::init(){
     
     //buff_size = BUFF_SIZE;//sizeof(sox_sample_t) * BUFF_SIZE;
     buff_size = BUFF_SIZE;
-    sox_init();
-    ft = sox_open_read("default", &signalinfo, 0, "pulseaudio");
+    //    sox_init();
+    printf("before init\n");
+    fflush(stdout);
+    
+    //    sox_init();
+    printf("init ok\n");
+    fflush(stdout);
+    //    ft = sox_open_read("default", &signalinfo, 0, "pulseaudio");
   }
   else{
     sox_signalinfo_t signalinfo;
@@ -30,8 +36,15 @@ void AudioInterface::init(){
     audio_buff = (sox_sample_t*)malloc(sizeof(sox_sample_t) * BUFF_SIZE);
     //    buff_size = sizeof(audio_buff);//BUFF_SIZE;//sizeof(sox_sample_t) * BUFF_SIZE;
     buff_size = BUFF_SIZE;
-    sox_init();    
-    ft = sox_open_write("default", &signalinfo, 0, "pulseaudio", 0, 0);
+    //
+    printf("before init\n");
+    fflush(stdout);
+    
+    //    sox_init();
+    printf("init ok\n");
+    fflush(stdout);
+  
+    //    ft = sox_open_write("default", &signalinfo, 0, "pulseaudio", 0, 0);
     read_size = 0;
   }
 }

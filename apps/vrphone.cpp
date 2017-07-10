@@ -82,8 +82,8 @@ int main(int argc, char** argv){
   else{
     printf("starting in client mode.\n");
     op_mode = CLIENT_MODE;
-    //    char *ip = "192.168.86.102";
-    char *ip = "127.0.0.1";
+    char *ip = "192.168.100.109";
+    //    char *ip = "127.0.0.1";
     inet_aton(ip, &opponent_addr.sin_addr);
     printf("starting connection.\n");
     int tcp_socket = TCP_client_init(ip, SERVER_TCP_PORT);
@@ -99,18 +99,26 @@ int main(int argc, char** argv){
 
   AudioInterface audio_send(MEDIA_SEND);
   AudioInterface audio_recv(MEDIA_RECV);
-
   //  install_sig_hooks();
   //    if(false){
 
-  std::thread video_send_thread(threaded_send, &opponent_addr,
+  /*  std::thread video_send_thread(threaded_send, &opponent_addr,
 				op_mode == CLIENT_MODE ? SERVER_VIDEO_UDP_PORT : CLIENT_VIDEO_UDP_PORT,
 				&video_send);
     std::thread video_recv_thread(threaded_recv,
 				  op_mode == SERVER_MODE ? SERVER_VIDEO_UDP_PORT : CLIENT_VIDEO_UDP_PORT,
-				  &video_recv);
+				  &video_recv);*/
     //    if(option == "s"){
+  sox_init();
+  sox_signalinfo_t signalinfo;
+  signalinfo.rate = 48000;
+  signalinfo.channels = 1;
+  signalinfo.precision = 8;
+  signalinfo.length = -1;
+  signalinfo.mult = NULL;
   
+  audio_send.ft = sox_open_read("default", &signalinfo, 0, "pulseaudio");
+  audio_recv.ft = sox_open_write("default", &signalinfo, 0, "pulseaudio", 0,0);
   std::thread audio_send_thread(threaded_send, &opponent_addr,
 				op_mode == CLIENT_MODE ? SERVER_AUDIO_UDP_PORT : CLIENT_AUDIO_UDP_PORT,
 				&audio_send);
@@ -121,10 +129,13 @@ int main(int argc, char** argv){
 				op_mode == SERVER_MODE ? SERVER_AUDIO_UDP_PORT : CLIENT_AUDIO_UDP_PORT,
 				&audio_recv);
   audio_send_thread.join();  
-  audio_recv_thread.join();    
+  audio_recv_thread.join();
+  sox_close(audio_send.ft);
+  sox_close(audio_recv.ft);
+  sox_quit();
       //    }
-  video_send_thread.join();
-  video_recv_thread.join();
+  //  video_send_thread.join();
+  //  video_recv_thread.join();
 
           
 
