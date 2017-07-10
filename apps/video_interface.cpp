@@ -2,8 +2,6 @@
 
 void VideoInterface::init(){
   img = cv::Mat::zeros(400, 800, CV_8UC4);
-  buff = img.data;
-  buff_size = img.total() * img.elemSize();
   if(mode == MEDIA_SEND){
     face.init();
     cv::namedWindow("VR Phone Server", 1);
@@ -63,8 +61,8 @@ void VideoInterface::prepareSendMedia(){
   
   buff = img.data;
   send_size = img.total() * img.elemSize();
-    cv::imshow("VR Phone Server", img);
-    auto key = cv::waitKey(1);  
+  cv::imshow("VR Phone Server", img);
+  auto key = cv::waitKey(1);  
 }
 
 void VideoInterface::playRecvMedia(){

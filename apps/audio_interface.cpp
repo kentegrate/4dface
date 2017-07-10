@@ -17,12 +17,13 @@ void AudioInterface::init(){
     }
     sox = fileno(fp);
   }
-  buff_size = sizeof(uchar)*BUFF_SIZE;  
+  buff_size = sizeof(uchar)*BUFF_SIZE;
+  read_size = buff_size;
   buff = (uchar*)malloc(buff_size);
 }
 
 void AudioInterface::prepareSendMedia(){
-  int n = read(sox, buff, BUFF_SIZE);
+  int n = read(sox, buff, buff_size);
   if(n == -1){
     perror("read");
   }
