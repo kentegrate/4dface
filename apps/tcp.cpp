@@ -1,6 +1,7 @@
+#include "vrphone.hpp"
 int TCP_client_init(char *IP_addr,int port)
 {
-  int s=socket(PF_INET,SOCK_STREAM,0);
+  int s=socket(AF_INET,SOCK_STREAM,0);
   if(s==-1){perror("socket");exit(1);}
 
   struct sockaddr_in addr;
@@ -19,7 +20,7 @@ void TCP_client_fini(int sock){
 
 int TCP_server_init(int port,struct sockaddr_in *client)
 {
-  int ss=socket(PF_INET,SOCK_STREAM,0);
+  int ss=socket(AF_INET,SOCK_STREAM,0);
   if(ss==-1){perror("socket");exit(1);}
 
   struct sockaddr_in addr;
@@ -32,7 +33,7 @@ int TCP_server_init(int port,struct sockaddr_in *client)
   listen(ss,10);
   
   socklen_t len=sizeof(struct sockaddr_in);
-  int s=accept(ss,(struct sockaddr *)&client,&len);
+  int s=accept(ss,(struct sockaddr *)client,&len);
   close(ss);
   if(s==-1){perror("accept");exit(1);}
 

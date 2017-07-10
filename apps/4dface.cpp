@@ -41,7 +41,6 @@ void render_anaglyph(render::Mesh mesh, glm::tmat4x4<float> model_view_matrix, g
   model_view_matrix[3][0] = -parallax_coeff;
   std::tie(render_right, std::ignore) = render::render(mesh, model_view_matrix, projection_matrix, viewport_width,
 						      viewport_height, texture, true, false, false);  
-
   //  vector<Mat> left_channels;
   //  vector<Mat> right_channels;  
   

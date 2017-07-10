@@ -3,7 +3,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 void AudioInterface::init(){
-
   if(mode == MEDIA_SEND){
     FILE *fp=popen("rec -t raw -b 16 -c 1 -e s -r 44100 -", "r");
     if(fp == NULL){
@@ -17,8 +16,9 @@ void AudioInterface::init(){
       fprintf(stderr, "popen error");
     }
     sox = fileno(fp);
-
   }
+  buff_size = sizeof(uchar)*BUFF_SIZE;  
+  buff = (uchar*)malloc(buff_size);
 }
 
 void AudioInterface::prepareSendMedia(){
@@ -26,8 +26,13 @@ void AudioInterface::prepareSendMedia(){
   if(n == -1){
     perror("read");
   }
+  send_size = n;
 }
 
 void AudioInterface::playRecvMedia(){
   write(sox, buff, read_size);
+}
+
+void AudioInterface::fini(){
+  free(buff);
 }
