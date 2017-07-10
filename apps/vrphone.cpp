@@ -82,7 +82,7 @@ int main(int argc, char** argv){
   else{
     printf("starting in client mode.\n");
     op_mode = CLIENT_MODE;
-    char *ip = "127.0.0.1";
+    char *ip = "192.168.86.102";
     inet_aton(ip, &opponent_addr.sin_addr);
     printf("starting connection.\n");
     int tcp_socket = TCP_client_init(ip, SERVER_TCP_PORT);
@@ -108,26 +108,19 @@ int main(int argc, char** argv){
 				  op_mode == SERVER_MODE ? SERVER_VIDEO_UDP_PORT : CLIENT_VIDEO_UDP_PORT,
 				  &video_recv);
 
-    video_send_thread.join();
-    video_recv_thread.join();        
   
-  //   }
-    /*  if(option == "s"){
   std::thread audio_send_thread(threaded_send, &opponent_addr,
 				op_mode == CLIENT_MODE ? SERVER_AUDIO_UDP_PORT : CLIENT_AUDIO_UDP_PORT,
 				&audio_send);
-  audio_send_thread.join();  
-  }
-  else{
+
+
   std::thread audio_recv_thread(threaded_recv,
 				op_mode == SERVER_MODE ? SERVER_AUDIO_UDP_PORT : CLIENT_AUDIO_UDP_PORT,
 				&audio_recv);
-
+  video_send_thread.join();
+  video_recv_thread.join();        
   audio_recv_thread.join();  
-  }*;
-
-    */
-
+  audio_send_thread.join();  
 
 
   
