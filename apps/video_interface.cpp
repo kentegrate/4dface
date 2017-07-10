@@ -19,24 +19,40 @@ void VideoInterface::fini(){
 }
 
 void VideoInterface::receiveMedia(int socket, struct sockaddr_in addr, bool wait_all){
-  uchar* tiny_buffer;  
-  for(int i = 0; i < DIV_SIZE; i++){
-    tiny_buffer = img.data + (buff_size/DIV_SIZE)*i;
-    recv(socket, tiny_buffer, buff_size/DIV_SIZE, 0);
+  std::vector<uchar> img_buff;
+  while(1){
+    uchar tiny_buff[BUFF_SIZE];
+    int n = recv(socket, tiny_buff, BUFF_SIZE, 0);
+    if(n==0)break;
+    std::copy(tiny_buff, tiny_buff+n, img_buff.begin());    
   }
+  img = imdecode(cv::Mat(img_buff), CV_LOAD_IMAGE_COLOR);
 }
 
 void VideoInterface::sendMedia(int socket, struct sockaddr_in addr){
   uchar* tiny_buffer;
-  for(int i = 0; i < DIV_SIZE; i++){
-    tiny_buffer = img.data + (send_size/DIV_SIZE)*i;
-    sendto(socket, tiny_buffer, send_size/DIV_SIZE, 0, (struct sockaddr*)&addr, sizeof(struct sockaddr));
-    
+  std::vector<uchar> img_buff;
+  std::vector<int> param = std::vector<int>(2);
+  param[0] = CV_IMWRITE_JPEG_QUALITY;
+  param[1] = 40;
+  imencode(".jpg", img, img_buff, param);
+  int img_bytes = img_buff.size();
+  int current_idx = 0;
+  while(1){
+    int sending_bytes = img_bytes - current_idx;
+    if(sending_bytes <= 0)break;
+    if(sending_bytes > BUFF_SIZE){
+      sending_bytes = BUFF_SIZE;
+    }
+    tiny_buffer = &img_buff[0] + current_idx;
+    sendto(socket, tiny_buffer, sending_bytes, 0, (struct sockaddr*)&addr, sizeof(struct sockaddr));
+    current_idx += sending_bytes;
   }
 }
 
 void VideoInterface::prepareSendMedia(){
   face.getFrame(img); //TODO : make 4d face rendering async.
+  
   buff = img.data;
   send_size = img.total() * img.elemSize();
 

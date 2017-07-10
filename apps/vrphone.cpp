@@ -78,7 +78,7 @@ int main(int argc, char** argv){
   else{
     printf("starting in client mode.\n");
     op_mode = CLIENT_MODE;
-    char *ip = "192.168.100.109";
+    char *ip = "192.168.86.102";
     inet_aton(ip, &opponent_addr.sin_addr);
     printf("starting connection.\n");
     int tcp_socket = TCP_client_init(ip, SERVER_TCP_PORT);
