@@ -12,10 +12,10 @@ void AudioInterface::init(){
     signalinfo.length = -1;
     signalinfo.mult = NULL;
   
-    audio_buff = (sox_sample_t*)malloc(sizeof(sox_sample_t) * BUFF_SIZE);
+    audio_buff = (sox_sample_t*)malloc(sizeof(sox_sample_t) * AUDIO_BUFF_SIZE);
     
     //buff_size = BUFF_SIZE;//sizeof(sox_sample_t) * BUFF_SIZE;
-    buff_size = BUFF_SIZE;
+    buff_size = AUDIO_BUFF_SIZE;
     //    sox_init();
     printf("before init\n");
     fflush(stdout);
@@ -33,9 +33,9 @@ void AudioInterface::init(){
     signalinfo.length = -1;
     signalinfo.mult = NULL;
     
-    audio_buff = (sox_sample_t*)malloc(sizeof(sox_sample_t) * BUFF_SIZE);
+    audio_buff = (sox_sample_t*)malloc(sizeof(sox_sample_t) * AUDIO_BUFF_SIZE);
     //    buff_size = sizeof(audio_buff);//BUFF_SIZE;//sizeof(sox_sample_t) * BUFF_SIZE;
-    buff_size = BUFF_SIZE;
+    buff_size = AUDIO_BUFF_SIZE;
     //
     printf("before init\n");
     fflush(stdout);
@@ -55,14 +55,18 @@ void AudioInterface::prepareSendMedia(){
     perror("read");
   }
   send_size = n;
+  printf("send size %d\n" ,send_size);
 }
 void AudioInterface::receiveMedia(int socket, struct sockaddr_in addr, bool wait_al){
+  printf("recived audio\n");
   read_size = recv(socket, audio_buff, buff_size*4, 0);
   if(read_size == -1){
     perror("receive");
   }
+  
 }
 void AudioInterface::sendMedia(int socket, struct sockaddr_in addr){
+  printf("sent auidio\n");
   sendto(socket, audio_buff, send_size*4, 0, (struct sockaddr*)&addr, sizeof(struct sockaddr));
 }
 void AudioInterface::playRecvMedia(){
